@@ -41,15 +41,17 @@ RUN wget https://ftp.postgresql.org/pub/source/v11.6/postgresql-11.6.tar.gz
 RUN tar xvf postgresql-11.6.tar.gz
 COPY pgspider/pgspider.patch /app/pgspider.patch
 RUN patch -p1 -d postgresql-11.6 < /app/pgspider.patch
-COPY Makefile postgresql-11.6/contrib/pgspider_core_fdw
+COPY Makefile postgresql-11.6/contrib/pgspider_core_fdw/Makefile
 RUN cd postgresql-11.6 \
    && ./configure \
    && make && make install \
-   && cd contrib/pgspider_core_fdw \
-   && make && make install \ 
-   && cd ../pgspider_fdw \
-   && make && make install
-   RUN  rm -rf /var/lib/apt/lists/*
+   && cd /app/postgresql-11.6/contrib/pgspider_core_fdw \
+   && make && make install \
+   && cd /app/postgresql-11.6/contrib/pgspider_fdw \ 
+   && make && make install \
+   && cd /app/postgresql-11.6/contrib \ 
+   && make && make install \
+   && rm -rf /var/lib/apt/lists/* && rm -rf /app/postgresql-11.6.tar.gz /apppostgresql-11.6
 RUN sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/pgspider/share/postgresql/postgresql.conf.sample; \
    grep -F "listen_addresses = '*'" /usr/local/pgspider/share/postgresql/postgresql.conf.sample
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql  && chmod 2777 /var/run/postgresql
