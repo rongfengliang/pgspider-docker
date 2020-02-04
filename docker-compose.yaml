@@ -1,0 +1,9 @@
+version: "3"
+services: 
+  pg:
+    build: ./
+    image: dalongrong/pgspider
+    ports: 
+    - "5432:5432"
+    environment: 
+    - "POSTGRES_PASSWORD:dalong"
