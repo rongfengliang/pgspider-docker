@@ -40,7 +40,7 @@ RUN mkdir /docker-entrypoint-initdb.d
 RUN wget https://ftp.postgresql.org/pub/source/v11.6/postgresql-11.6.tar.gz
 RUN wget https://raw.githubusercontent.com/pgspider/pgspider/master/pgspider.patch
 RUN tar xvf postgresql-11.6.tar.gz
-COPY pgspider/pgspider.patch /app/pgspider.patch
+# COPY pgspider/pgspider.patch /app/pgspider.patch
 RUN patch -p1 -d postgresql-11.6 < /app/pgspider.patch
 # COPY Makefile postgresql-11.6/contrib/pgspider_core_fdw/Makefile
 RUN cd postgresql-11.6 \
