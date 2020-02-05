@@ -1,4 +1,8 @@
 FROM dalongrong/pgspider:base as build
+WORKDIR /app
+RUN apt-get update && apt-get install -y libsqlite3-dev
+RUN git clone https://github.com/pgspider/sqlite_fdw.git /app/postgresql-11.6/contrib/sqlite_fdw
+RUN cd /app/postgresql-11.6/contrib/sqlite_fdw && make && make install
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
