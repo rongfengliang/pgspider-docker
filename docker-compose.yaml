@@ -43,6 +43,12 @@ services:
     - "5436:5432"
     environment: 
     - "POSTGRES_PASSWORD:dalong"
+  pg-influxdb:
+    image: dalongrong/pgspider:influxdb
+    ports: 
+    - "5437:5432"
+    environment: 
+    - "POSTGRES_PASSWORD:dalong"
   mongo:
     image: mongo
     ports: 
