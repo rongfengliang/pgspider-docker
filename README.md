@@ -60,3 +60,36 @@ INSERT INTO "public"."t1"("i","t")
 VALUES
 (1,E'demo');
 ```
+
+## mysql fdw
+
+```code
+CREATE EXTENSION pgspider_core_fdw;
+CREATE EXTENSION mysql_fdw;
+CREATE EXTENSION pgspider_fdw;
+
+CREATE SERVER parent FOREIGN DATA WRAPPER pgspider_core_fdw OPTIONS (host '127.0.0.1', port '5432');
+
+CREATE SERVER mysql_svr FOREIGN DATA WRAPPER mysql_fdw OPTIONS(host 'mysql', port '3306');
+
+CREATE USER MAPPING FOR CURRENT_USER SERVER parent OPTIONS(user 'root', password 'dalongrong');
+
+CREATE USER MAPPING FOR CURRENT_USER SERVER mysql_svr OPTIONS(username 'root', password 'dalongrong');
+
+CREATE FOREIGN TABLE apps(id int, appname text, __spd_url text) SERVER parent;
+CREATE FOREIGN TABLE apps__mysql_svr__0(id int, appname text) SERVER mysql_svr OPTIONS (dbname 'demo', table_name 'apps');
+
+select * from apps;
+
+mysql db:
+
+CREATE TABLE `apps` (
+  `id` bigint(20) DEFAULT NULL,
+  `appname` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+
+INSERT INTO demo.apps (id,appname) VALUES 
+(1,'demo')
+;
+```
