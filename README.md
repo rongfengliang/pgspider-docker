@@ -2,6 +2,26 @@
 
 ## Usegae
 
+* sqlite fdw
+
+```code
+CREATE EXTENSION pgspider_core_fdw;
+CREATE EXTENSION sqlite_fdw;
+CREATE EXTENSION pgspider_fdw;
+
+CREATE SERVER parent FOREIGN DATA WRAPPER pgspider_core_fdw OPTIONS (host '127.0.0.1', port '5432');
+
+CREATE SERVER sqlite_svr FOREIGN DATA WRAPPER sqlite_fdw OPTIONS(database '/opt/proxysql.db');
+
+CREATE USER MAPPING FOR CURRENT_USER SERVER parent OPTIONS(user 'postgres', password 'dalong');
+
+CREATE FOREIGN TABLE mysql_users(username text, password text,default_schema text, __spd_url text) SERVER parent;
+
+CREATE FOREIGN TABLE mysql_users__sqlite_svr__0(username text, password text,default_schema text) SERVER sqlite_svr OPTIONS (table 'mysql_users');
+
+select * from mysql_users;
+```
+
 * mongodb fdw
 
 ```code

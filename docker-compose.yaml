@@ -33,6 +33,8 @@ services:
     image: dalongrong/pgspider:sqlite
     ports: 
     - "5435:5432"
+    volumes: 
+    - "./proxysql.db:/opt/proxysql.db"
     environment: 
     - "POSTGRES_PASSWORD:dalong"
   pg-mongo:
