@@ -1,9 +1,26 @@
 version: "3"
 services: 
-  pg:
-    build: ./
-    image: dalongrong/pgspider
+  pg-core:
+    image: dalongrong/pgspider:core
     ports: 
     - "5432:5432"
+    environment: 
+    - "POSTGRES_PASSWORD:dalong"
+  pg:
+    image: postgres:12.1-alpine
+    ports: 
+    - "5433:5432"
+    environment: 
+    - "POSTGRES_PASSWORD:dalong"
+  pg-mysql:
+    image: dalongrong/pgspider:mysql
+    ports: 
+    - "5434:5432"
+    environment: 
+    - "POSTGRES_PASSWORD:dalong"
+  pg-sqlite:
+    image: dalongrong/pgspider:sqlite
+    ports: 
+    - "5435:5432"
     environment: 
     - "POSTGRES_PASSWORD:dalong"
