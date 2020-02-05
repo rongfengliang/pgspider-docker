@@ -1,0 +1,32 @@
+FROM debian:stretch-slim
+RUN apt-get update && apt-get install -y build-essential git  wget libreadline-dev  zlib1g-dev
+WORKDIR /app
+RUN set -eux; \
+   if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
+   # if this file exists, we're likely in "debian:xxx-slim", and locales are thus being excluded so we need to remove that exclusion (since we need locales)
+   grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+   sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/docker; \
+   ! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+   fi; \
+   apt-get update; apt-get install -y locales; rm -rf /var/lib/apt/lists/*; \
+   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+RUN set -eux; \
+   apt-get update; \
+   apt-get install -y --no-install-recommends libnss-wrapper; \
+   rm -rf /var/lib/apt/lists/*
+RUN wget https://ftp.postgresql.org/pub/source/v11.6/postgresql-11.6.tar.gz
+RUN wget https://raw.githubusercontent.com/pgspider/pgspider/master/pgspider.patch
+RUN tar xvf postgresql-11.6.tar.gz
+RUN patch -p1 -d postgresql-11.6 < /app/pgspider.patch
+RUN cd postgresql-11.6 \
+   && ./configure \
+   && make && make install \
+   && cd /app/postgresql-11.6/contrib/pgspider_core_fdw \
+   && make && make install \
+   && cd /app/postgresql-11.6/contrib/pgspider_fdw \ 
+   && make && make install \
+   && cd /app/postgresql-11.6/contrib \ 
+   && make && make install
+ENV PATH $PATH:/usr/local/pgspider/bin
