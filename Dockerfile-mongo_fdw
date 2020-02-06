@@ -6,7 +6,7 @@ RUN cd /app/postgresql-11.6/contrib/mongo_fdw && git submodule update --init && 
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget libmongoc-1.0-0
+RUN apt-get update && apt-get install -y wget libmongoc-1.0-0  libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \

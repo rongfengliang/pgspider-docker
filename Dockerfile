@@ -2,7 +2,7 @@ FROM dalongrong/pgspider:base as build
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \

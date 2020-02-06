@@ -6,7 +6,7 @@ RUN cd /app/postgresql-11.6/contrib/mysql_fdw && make && make install
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget libmysql++-dev
+RUN apt-get update && apt-get install -y wget libmysql++-dev libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \

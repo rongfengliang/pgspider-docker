@@ -2,12 +2,12 @@ FROM dalongrong/pgspider:base as build
 WORKDIR /app
 RUN apt-get update && apt-get install -y  automake autoconf libtool pkg-config libssl-dev
 RUN git clone --recursive  https://github.com/pgspider/griddb_fdw.git /app/postgresql-11.6/contrib/griddb_fdw
-RUN git clone --recursive  https://github.com/griddb/c_client.git /app/postgresql-11.6/contrib/griddb_fdw/griddb
+RUN wget https://github.com/griddb/c_client/archive/v4.3.1.tar.gz && tar zxvf v4.3.1.tar.gz && mv  c_client-4.3.1  griddb && cp  -rf  griddb /app/postgresql-11.6/contrib/griddb_fdw
 RUN cd /app/postgresql-11.6/contrib/griddb_fdw/griddb/client/c  && ./bootstrap.sh && ./configure &&  make && make install
 RUN cd /app/postgresql-11.6/contrib/griddb_fdw && make && make install
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \
