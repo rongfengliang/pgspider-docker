@@ -44,7 +44,7 @@ RUN set -eux; \
 RUN mkdir /docker-entrypoint-initdb.d
 COPY  --from=build  /usr/local/pgspider /usr/local/pgspider
 COPY  --from=build  /app/postgresql-11.6/contrib/griddb_fdw/griddb/bin/libgridstore.so.0.0.0 /usr/lib/x86_64-linux-gnu/libgridstore.so
-RUN ln -s /usr/lib/x86_64-linux-gnu/libgridstore.so //usr/lib/x86_64-linux-gnu/libgridstore.so.0
+RUN ln -s /usr/lib/x86_64-linux-gnu/libgridstore.so /usr/lib/x86_64-linux-gnu/libgridstore.so.0
 RUN sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/pgspider/share/postgresql/postgresql.conf.sample; \
    grep -F "listen_addresses = '*'" /usr/local/pgspider/share/postgresql/postgresql.conf.sample
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql  && chmod 2777 /var/run/postgresql
