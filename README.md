@@ -113,3 +113,22 @@ INSERT INTO demo.apps (id,appname) VALUES
 (1,'demo')
 ;
 ```
+
+## influxdb fdw
+
+```code
+CREATE EXTENSION influxdb_fdw;
+CREATE SERVER influxdb_server FOREIGN DATA WRAPPER influxdb_fdw OPTIONS
+(dbname 'mydb', host 'http://influxdb', port '8086') ;
+CREATE USER MAPPING FOR CURRENT_USER SERVER influxdb_server OPTIONS(user 'dalong', password 'dalong');
+CREATE FOREIGN TABLE t1(time timestamp with time zone , age int,name text, email text,user_id int) SERVER influxdb_server OPTIONS (table 'demouser');
+SELECT * FROM t1;
+
+or import schema:
+IMPORT FOREIGN SCHEMA public FROM SERVER influxdb_server INTO public;
+select * from demouser;
+insert into influxdb datas:
+demouser,name=dalong,age=30 user_id=100,email="dalong@qq.com"
+demouser,name=荣锋亮,age=20 user_id=10,email="dalongrong@qq.com"
+
+```

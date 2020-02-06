@@ -1,23 +1,23 @@
 version: "3"
-services: 
+services:
   pg-core:
     image: dalongrong/pgspider:core
-    ports: 
-    - "5432:5432"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   pg:
     image: postgres:12.1-alpine
-    ports: 
-    - "5433:5432"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5433:5432"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   pg-mysql:
     image: dalongrong/pgspider:mysql
-    ports: 
-    - "5434:5432"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5434:5432"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   mysql:
     image: mysql:5.7.16
     ports:
@@ -31,25 +31,40 @@ services:
       TZ: Asia/Shanghai
   pg-sqlite:
     image: dalongrong/pgspider:sqlite
-    ports: 
-    - "5435:5432"
-    volumes: 
-    - "./proxysql.db:/opt/proxysql.db"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5435:5432"
+    volumes:
+      - "./proxysql.db:/opt/proxysql.db"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   pg-mongo:
     image: dalongrong/pgspider:mongo
-    ports: 
-    - "5436:5432"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5436:5432"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   pg-influxdb:
     image: dalongrong/pgspider:influxdb
-    ports: 
-    - "5437:5432"
-    environment: 
-    - "POSTGRES_PASSWORD:dalong"
+    ports:
+      - "5437:5432"
+    environment:
+      - "POSTGRES_PASSWORD:dalong"
   mongo:
     image: mongo
-    ports: 
-    - "27017:27017"
+    ports:
+      - "27017:27017"
+  influxdb:
+    image: influxdb
+    environment:
+      - "INFLUXDB_ADMIN_USER=dalong"
+      - "INFLUXDB_ADMIN_PASSWORD=dalong"
+      - "INFLUXDB_USER=demo"
+      - "INFLUXDB_USER_PASSWORD=demo"
+      - "INFLUXDB_DB=mydb"
+    ports:
+      - "8086:8086"
+  chronograf:
+    image: chronograf
+    ports:
+      - "8888:8888"
+    command: --influxdb-url=http://influxdb:8086
