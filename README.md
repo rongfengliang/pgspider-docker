@@ -132,3 +132,13 @@ demouser,name=dalong,age=30 user_id=100,email="dalong@qq.com"
 demouser,name=荣锋亮,age=20 user_id=10,email="dalongrong@qq.com"
 
 ```
+## griddb fdw
+
+```code
+CREATE EXTENSION griddb_fdw;
+
+// use notification_member 
+CREATE SERVER griddb_svr FOREIGN DATA WRAPPER griddb_fdw OPTIONS(notification_member 'griddb:10001',clustername 'defaultCluster');
+CREATE USER MAPPING FOR public SERVER griddb_svr OPTIONS(username 'admin', password 'admin');
+IMPORT FOREIGN SCHEMA griddb_schema FROM SERVER griddb_svr INTO public;
+```
