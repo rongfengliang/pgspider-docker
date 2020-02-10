@@ -142,3 +142,68 @@ CREATE SERVER griddb_svr FOREIGN DATA WRAPPER griddb_fdw OPTIONS(notification_me
 CREATE USER MAPPING FOR public SERVER griddb_svr OPTIONS(username 'admin', password 'admin');
 IMPORT FOREIGN SCHEMA griddb_schema FROM SERVER griddb_svr INTO public;
 ```
+
+## sql server fdw
+
+```code
+
+init some datas:
+in sql server:
+create DATABASE appdemos;
+use appdemos;
+create table apps (
+    id int,
+    age int,
+    name VARCHAR(256)
+);
+insert into apps VALUES(1,22,'appdemo');
+insert into apps VALUES(2,30,'荣锋亮');
+in pg database:
+
+CREATE EXTENSION tds_fdw;
+CREATE SERVER mssql_svr
+	FOREIGN DATA WRAPPER tds_fdw
+	OPTIONS (servername 'db', port '1433', database 'appdemos',msg_handler 'notice',character_set 'UTF-8');
+
+CREATE USER MAPPING FOR postgres
+	SERVER mssql_svr 
+	OPTIONS (username 'sa', password 'Dalong!123%');
+
+CREATE FOREIGN TABLE apps (
+	id integer,
+	age integer,
+    name varchar)
+	SERVER mssql_svr
+	OPTIONS (table_name 'dbo.apps', row_estimate_method 'showplan_all');
+or  import schema:
+
+IMPORT FOREIGN SCHEMA dbo
+	FROM SERVER mssql_svr
+	INTO public
+	OPTIONS (import_default 'true');
+
+select * from  apps
+```
+
+## oracle fdw
+
+```code
+CREATE EXTENSION oracle_fdw;
+CREATE SERVER oradb FOREIGN DATA WRAPPER oracle_fdw
+          OPTIONS (dbserver '//host:1521/sjzl');
+          CREATE USER MAPPING FOR postgres SERVER oradb
+          OPTIONS (user 'user', password 'password');
+        
+          CREATE FOREIGN TABLE <map-table> (
+          PK_CASE        VARCHAR,
+          CREATEUSER     VARCHAR,
+          APPLICANTID  VARCHAR
+       ) SERVER oradb OPTIONS (schema 'ORAUSER', table 'table');
+
+  CREATE FOREIGN TABLE <map-table> (
+          CLIENTID        VARCHAR,
+          CLIENTNAME     VARCHAR,
+          PK_CLIENT  VARCHAR
+       ) SERVER oradb OPTIONS (schema 'ORAUSER', table 'table');
+       select * from <<map-table>>;
+```
