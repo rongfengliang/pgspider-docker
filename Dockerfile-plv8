@@ -9,7 +9,7 @@ RUN curl -o ${PLV8_VERSION}.tar.gz -SL "https://github.com/plv8/plv8/archive/$PL
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget libsqlite3-dev libreadline-dev
+RUN apt-get update && apt-get install -y wget libc++1 libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \

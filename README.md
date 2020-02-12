@@ -1,5 +1,7 @@
 # pgspider docker file
 
+> include v8 extension
+
 ## Usegae
 
 * sqlite fdw
