@@ -1,0 +1,4 @@
+FROM dalongrong/pgspider:oracle
+RUN apt-get update &&  apt-get innstall -y libc++1
+COPY  --from=dalongrong/pgspider:plv8  /usr/local/pgspider/lib/postgresql/plv8-2.3.12.so /usr/local/pgspider/lib/postgresql/plv8-2.3.12.so
+COPY  --from=dalongrong/pgspider:plv8  /usr/local/pgspider/share/postgresql/extension /usr/local/pgspider/share/postgresql/extension
