@@ -37,7 +37,7 @@ RUN cd /app/postgresql-11.6/contrib/sqlite_fdw && make && make install
 RUN cd /app/postgresql-11.6/contrib/influxdb_fdw && make USE_PGXS=1 with_llvm=no && make install USE_PGXS=1 with_llvm=no
 RUN cd /app/postgresql-11.6/contrib/oracle_fdw && make && make install
 RUN cd /app/postgresql-11.6/contrib/redis_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make innstall
+RUN cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make install
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11

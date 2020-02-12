@@ -24,7 +24,7 @@ RUN cd /app/postgresql-11.6/contrib/tds_fdw && make && make install
 RUN cd /app/postgresql-11.6/contrib/sqlite_fdw && make && make install
 RUN cd /app/postgresql-11.6/contrib/influxdb_fdw && make USE_PGXS=1 with_llvm=no && make install USE_PGXS=1 with_llvm=no
 RUN cd /app/postgresql-11.6/contrib/redis_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make innstall
+RUN cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make install
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
 RUN apt-get update && apt-get install -y wget libreadline-dev libmongoc-1.0-0  libmysql++-dev libsqlite3-dev libsybdb5 freetds-dev freetds-common libhiredis-dev

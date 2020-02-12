@@ -5,7 +5,7 @@ ENV PLV8_VERSION_1=2.3.12
 RUN apt-get update && apt-get install -y ca-certificates python curl libc++-dev libc++abi-dev  pkg-config
 RUN curl -o ${PLV8_VERSION}.tar.gz -SL "https://github.com/plv8/plv8/archive/$PLV8_VERSION.tar.gz" \
     && tar -xzf ${PLV8_VERSION}.tar.gz  && mv plv8-${PLV8_VERSION_1} plv8 && cp  -rf plv8  /app/postgresql-11.6/contrib/plv8_fdw \
-    && cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make innstall
+    && cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make install
 
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
