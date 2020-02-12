@@ -1,33 +1,15 @@
 FROM dalongrong/pgspider:base as build
 WORKDIR /app
-RUN apt-get update && apt-get install -y  automake autoconf libtool pkg-config libssl-dev libmysql++-dev libsqlite3-dev libsybdb5 freetds-dev freetds-common libhiredis-dev ca-certificates python curl libc++-dev libc++abi-dev
-RUN wget https://dl.google.com/go/go1.13.3.linux-amd64.tar.gz && tar zxvf go1.13.3.linux-amd64.tar.gz
-ENV PATH $PATH:/app/go/bin
-ENV GOPATH /opt/go
 ENV PLV8_VERSION=v2.3.12
 ENV PLV8_VERSION_1=2.3.12
-RUN go get github.com/influxdata/influxdb1-client/v2
-RUN git clone --recursive  https://github.com/pgspider/griddb_fdw.git /app/postgresql-11.6/contrib/griddb_fdw
-RUN wget https://github.com/griddb/c_client/releases/download/v4.2.0/griddb_c_client-4.2.0-linux.x86_64.tar.gz && tar zxvf griddb_c_client-4.2.0-linux.x86_64.tar.gz && mv  c_client-4.2.0  griddb && cp  -rf  griddb /app/postgresql-11.6/contrib/griddb_fdw
-RUN git clone --recursive  https://github.com/EnterpriseDB/mongo_fdw.git /app/postgresql-11.6/contrib/mongo_fdw
-RUN git clone https://github.com/pgspider/mysql_fdw.git /app/postgresql-11.6/contrib/mysql_fdw
-RUN git clone https://github.com/tds-fdw/tds_fdw.git /app/postgresql-11.6/contrib/tds_fdw
-RUN git clone https://github.com/pgspider/sqlite_fdw.git /app/postgresql-11.6/contrib/sqlite_fdw
-RUN git clone https://github.com/pgspider/influxdb_fdw.git /app/postgresql-11.6/contrib/influxdb_fdw
-RUN wget https://github.com/nahanni/rw_redis_fdw/archive/v1.0.tar.gz && tar zxf v1.0.tar.gz && mv rw_redis_fdw-1.0  redis_fdw && cp -rf redis_fdw /app/postgresql-11.6/contrib/redis_fdw
+RUN apt-get update && apt-get install -y ca-certificates python curl libc++-dev libc++abi-dev  pkg-config
 RUN curl -o ${PLV8_VERSION}.tar.gz -SL "https://github.com/plv8/plv8/archive/$PLV8_VERSION.tar.gz" \
-    && tar -xzf ${PLV8_VERSION}.tar.gz  && mv plv8-${PLV8_VERSION_1} plv8 && cp  -rf plv8  /app/postgresql-11.6/contrib/plv8_fdw
-RUN cd /app/postgresql-11.6/contrib/griddb_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/mongo_fdw && git submodule update --init && ./autogen.sh --with-master && make && make install
-RUN cd /app/postgresql-11.6/contrib/mysql_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/tds_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/sqlite_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/influxdb_fdw && make USE_PGXS=1 with_llvm=no && make install USE_PGXS=1 with_llvm=no
-RUN cd /app/postgresql-11.6/contrib/redis_fdw && make && make install
-RUN cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make innstall
+    && tar -xzf ${PLV8_VERSION}.tar.gz  && mv plv8-${PLV8_VERSION_1} plv8 && cp  -rf plv8  /app/postgresql-11.6/contrib/plv8_fdw \
+    && cd /app/postgresql-11.6/contrib/plv8_fdw && make static && make innstall
+
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget libreadline-dev libmongoc-1.0-0  libmysql++-dev libsqlite3-dev libsybdb5 freetds-dev freetds-common libhiredis-dev
+RUN apt-get update && apt-get install -y wget libsqlite3-dev libreadline-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \
@@ -63,8 +45,6 @@ RUN set -eux; \
 
 RUN mkdir /docker-entrypoint-initdb.d
 COPY  --from=build  /usr/local/pgspider /usr/local/pgspider
-COPY  --from=build  /app/postgresql-11.6/contrib/griddb_fdw/griddb/bin/libgridstore.so.0.0.0 /usr/lib/x86_64-linux-gnu/libgridstore.so
-RUN ln -s /usr/lib/x86_64-linux-gnu/libgridstore.so /usr/lib/x86_64-linux-gnu/libgridstore.so.0
 RUN sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/pgspider/share/postgresql/postgresql.conf.sample; \
    grep -F "listen_addresses = '*'" /usr/local/pgspider/share/postgresql/postgresql.conf.sample
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql  && chmod 2777 /var/run/postgresql
