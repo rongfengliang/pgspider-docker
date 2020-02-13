@@ -16,6 +16,9 @@ docker build -t dalongrong/pgspider:all-in-one-oracle-plv8 -f Dockerfile-all-in-
 docker build -t dalongrong/pgspider:all-in-one-plv8 -f Dockerfile-all-in-one-plv8 .
 docker build -t dalongrong/pgspider:zombodb -f Dockerfile-zombodb .
 docker build -t dalongrong/pgspider:zombodb-plv8 -f Dockerfile-zombodb-plv8 .
+docker build -t dalongrong/pgspider:all-in-one -f Dockerfile-all-in-one .
+docker build -t dalongrong/pgspider:all-in-one-oracle -f Dockerfile-all-in-one-oracle .
+
 
 ## push
 
@@ -30,5 +33,6 @@ docker push dalongrong/pgspider:griddb-4.2-plv8
 docker push dalongrong/pgspider:influxdb-plv8
 docker push dalongrong/pgspider:all-in-one-oracle-plv8 
 docker push dalongrong/pgspider:all-in-one-plv8
+docker push dalongrong/pgspider:all-in-one
 docker push dalongrong/pgspider:zombodb
 docker push dalongrong/pgspider:zombodb-plv8
