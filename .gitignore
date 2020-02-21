@@ -1,3 +1,4 @@
 pgspider
 Makefile
 Dockerfile-ldap
+#Dockerfile-clickhouse_fdw

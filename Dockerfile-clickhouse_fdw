@@ -1,12 +1,14 @@
 FROM dalongrong/pgspider:base as build
 WORKDIR /app
-RUN apt-get update && apt-get install -y  automake autoconf libtool pkg-config libssl-dev
-RUN git clone --recursive  https://github.com/pgspider/griddb_fdw.git /app/postgresql-11.6/contrib/griddb_fdw
-RUN wget https://github.com/griddb/c_client/releases/download/v4.2.0/griddb_c_client-4.2.0-linux.x86_64.tar.gz && tar zxvf griddb_c_client-4.2.0-linux.x86_64.tar.gz && mv  c_client-4.2.0  griddb && cp  -rf  griddb /app/postgresql-11.6/contrib/griddb_fdw
-RUN cd /app/postgresql-11.6/contrib/griddb_fdw && make && make install
+RUN apt-get update && apt-get install -y  openssl unixodbc-dev 
+# RUN wget https://github.com/ClickHouse/clickhouse-odbc/releases/download/v1.1.3.20200115/clickhouse-odbc-1.1.3-Linux.tar.gz &&  tar xzvf clickhouse-odbc-1.1.3-Linux.tar.gz 
+RUN git clone https://github.com/Percona-Lab/clickhousedb_fdw.git /app/postgresql-11.6/contrib/clickhousedb_fdw
+RUN cd /app/postgresql-11.6/contrib/clickhousedb_fdw && make -f lib/Makefile \ 
+    && make USE_PGXS=1 && make USE_PGXS=1 install
+
 FROM debian:stretch-slim
 ENV GOSU_VERSION 1.11
-RUN apt-get update && apt-get install -y wget libreadline-dev
+RUN apt-get update && apt-get install -y   wget openssl libreadline-dev unixodbc-dev
 # explicitly set user/group IDs
 RUN set -eux; \
 	groupadd -r postgres --gid=999; \
