@@ -1,7 +1,7 @@
 FROM dalongrong/pgspider:base as build
 WORKDIR /app
 RUN apt-get update && apt-get install -y  openssl unixodbc-dev 
-# RUN wget https://github.com/ClickHouse/clickhouse-odbc/releases/download/v1.1.3.20200115/clickhouse-odbc-1.1.3-Linux.tar.gz &&  tar xzvf clickhouse-odbc-1.1.3-Linux.tar.gz 
+RUN wget https://github.com/ClickHouse/clickhouse-odbc/releases/download/v1.1.3.20200115/clickhouse-odbc-1.1.3-Linux.tar.gz &&  tar xzvf clickhouse-odbc-1.1.3-Linux.tar.gz 
 RUN git clone https://github.com/Percona-Lab/clickhousedb_fdw.git /app/postgresql-11.6/contrib/clickhousedb_fdw
 RUN cd /app/postgresql-11.6/contrib/clickhousedb_fdw && make -f lib/Makefile \ 
     && make USE_PGXS=1 && make USE_PGXS=1 install
@@ -42,8 +42,10 @@ RUN set -eux; \
    apt-get install -y --no-install-recommends libnss-wrapper; \
    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /docker-entrypoint-initdb.d
+RUN mkdir /docker-entrypoint-initdb.d && mkdir -p /opt/clickhousedb
 COPY  --from=build  /usr/local/pgspider /usr/local/pgspider
+COPY  --from=build  /app/clickhouse-odbc-1.1.3-Linux/lib64/ /opt/clickhousedb/
+
 RUN sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/pgspider/share/postgresql/postgresql.conf.sample; \
    grep -F "listen_addresses = '*'" /usr/local/pgspider/share/postgresql/postgresql.conf.sample
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql  && chmod 2777 /var/run/postgresql
