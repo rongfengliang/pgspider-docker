@@ -2,3 +2,4 @@ pgspider
 Makefile
 Dockerfile-ldap
 #Dockerfile-clickhouse_fdw
+#Dockerfile-cstore_fdw
