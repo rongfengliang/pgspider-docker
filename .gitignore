@@ -3,3 +3,5 @@ Makefile
 Dockerfile-ldap
 #Dockerfile-clickhouse_fdw
 #Dockerfile-cstore_fdw
+#Dockerfile-es_fdw
+#Dockerfile-s3_fdw
