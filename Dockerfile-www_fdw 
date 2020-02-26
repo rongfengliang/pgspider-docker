@@ -1,0 +1,10 @@
+FROM postgres:9.5 as build
+WORKDIR /app
+RUN apt-get update && apt-get install -y cmake git build-essential gcc libssl-dev postgresql-server-dev-9.5 libcurl4-openssl-dev libjson-c-dev libxml++2.6-dev
+RUN git clone https://github.com/cyga/www_fdw.git
+RUN cd /app/www_fdw && USE_PGXS=1 make && USE_PGXS=1 make install
+
+FROM postgres:9.5
+RUN apt-get update && apt-get install -y libcurl4-openssl-dev libjson-c-dev libxml++2.6-dev libssl-dev
+COPY  --from=build  /usr/lib/postgresql   /usr/lib/postgresql
+COPY  --from=build  /usr/share/postgresql /usr/share/postgresql
