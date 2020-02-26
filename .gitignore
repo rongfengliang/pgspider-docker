@@ -1,7 +1,9 @@
 pgspider
 Makefile
-Dockerfile-ldap
+#Dockerfile-ldap
 #Dockerfile-clickhouse_fdw
 #Dockerfile-cstore_fdw
 #Dockerfile-es_fdw
 #Dockerfile-s3_fdw
+Dockerfile-s3_fdw-python2
+#Dockerfile-cassandra_fdw

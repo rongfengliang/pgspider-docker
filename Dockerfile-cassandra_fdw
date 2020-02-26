@@ -1,0 +1,13 @@
+FROM postgres:9.5 as build
+WORKDIR /app
+RUN apt-get update && apt-get install -y cmake git build-essential gcc libssl-dev libuv1-dev postgresql-server-dev-9.5
+RUN git clone https://github.com/The-Alchemist/cassandra_fdw.git
+RUN git clone  https://github.com/datastax/cpp-driver.git  && cd cpp-driver &&  git checkout 2.15.0 && cmake . && make && make install
+RUN cd /app/cassandra_fdw && USE_PGXS=1 make && USE_PGXS=1 make install
+
+FROM postgres:9.5
+RUN apt-get update && apt-get install -y libssl-dev libuv1-dev
+COPY  --from=build  /usr/lib/postgresql   /usr/lib/postgresql
+COPY  --from=build  /usr/share/postgresql /usr/share/postgresql
+COPY  --from=build /usr/local/lib/x86_64-linux-gnu/libcassandra.so /lib/x86_64-linux-gnu/libcassandra.so
+RUN ln -s /lib/x86_64-linux-gnu/libcassandra.so /lib/x86_64-linux-gnu/libcassandra.so.2

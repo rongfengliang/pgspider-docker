@@ -1,0 +1,9 @@
+FROM postgres:9.5 as build
+WORKDIR /app
+RUN apt-get update && apt-get  install  -y make git libldap2-dev gcc postgresql-server-dev-9.5
+RUN git clone https://github.com/guedes/ldap_fdw.git
+RUN cd ldap_fdw && make && make install
+
+FROM postgres:9.5
+COPY  --from=build  /usr/lib/postgresql   /usr/lib/postgresql
+COPY  --from=build  /usr/share/postgresql /usr/share/postgresql
