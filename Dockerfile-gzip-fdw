@@ -1,0 +1,10 @@
+FROM postgres:11 as build
+WORKDIR /app
+RUN apt-get update && apt-get install -y cmake git build-essential gcc libz-dev postgresql-server-dev-11  pkg-config
+RUN git clone https://github.com/pramsey/pgsql-gzip.git
+RUN cd /app/pgsql-http && USE_PGXS=1 make && USE_PGXS=1 make install
+
+FROM postgres:11
+RUN apt-get update &&  apt-get install -y libz-dev
+COPY  --from=build  /usr/lib/postgresql   /usr/lib/postgresql
+COPY  --from=build  /usr/share/postgresql /usr/share/postgresql 
