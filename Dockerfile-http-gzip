@@ -3,8 +3,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y libssl-dev libz-dev pkg-config  libcurl4-openssl-dev
 RUN git clone https://github.com/pramsey/pgsql-gzip.git /app/postgresql-11.6/contrib/pgsql-gzip
 RUN git clone https://github.com/pramsey/pgsql-http.git /app/postgresql-11.6/contrib/pgsql-http
+RUN git clone https://github.com/citusdata/pg_cron.git /app/postgresql-11.6/contrib/pg_cron
 RUN cd /app/postgresql-11.6/contrib/pgsql-gzip && make && make install
 RUN cd /app/postgresql-11.6/contrib/pgsql-http && make && make install
+RUN cd /app/postgresql-11.6/contrib/pg_cron && make  && make install
 
 
 FROM debian:stretch-slim
@@ -47,6 +49,8 @@ RUN mkdir /docker-entrypoint-initdb.d
 COPY  --from=build  /usr/local/pgspider /usr/local/pgspider
 RUN sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/pgspider/share/postgresql/postgresql.conf.sample; \
    grep -F "listen_addresses = '*'" /usr/local/pgspider/share/postgresql/postgresql.conf.sample
+RUN echo  "shared_preload_libraries = 'pg_cron'" >> /usr/local/pgspider/share/postgresql/postgresql.conf.sample \
+  && echo "cron.database_name = 'postgres'" >> /usr/local/pgspider/share/postgresql/postgresql.conf.sample
 RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql  && chmod 2777 /var/run/postgresql
 ENV PATH $PATH:/usr/local/pgspider/bin
 ENV PGDATA /var/lib/postgresql/data
