@@ -7,3 +7,4 @@ Makefile
 #Dockerfile-s3_fdw
 Dockerfile-s3_fdw-python2
 #Dockerfile-cassandra_fdw
+Dockerfile-h3
