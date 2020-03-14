@@ -8,3 +8,7 @@ Makefile
 Dockerfile-s3_fdw-python2
 #Dockerfile-cassandra_fdw
 Dockerfile-h3
+Dockerfile-pljava
+Dockerfile-base-java
+Dockerfile-base-python
+Dockerfile-pljava-copy
