@@ -1,0 +1,35 @@
+FROM dalongrong/pgspider:base as build
+WORKDIR /app
+RUN apt-get update && apt-get install -y cmake automake autoconf libtool pkg-config libssl-dev
+RUN wget https://github.com/eulerto/pgquarrel/archive/pgquarrel_0_7_0.tar.gz && tar zxvf pgquarrel_0_7_0.tar.gz && mv  pgquarrel-pgquarrel_0_7_0 pgquarrel
+RUN cd /app/pgquarrel && cmake -DCMAKE_INSTALL_PREFIX=/app/pgquarrel2 -DCMAKE_PREFIX_PATH=/app/pgquarrel2/pg11 &&  . make && make install
+
+FROM debian:stretch-slim
+ENV GOSU_VERSION 1.11
+RUN apt-get update && apt-get install -y wget libreadline-dev
+
+RUN wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+   && chmod +x /usr/local/bin/gosu \
+   && gosu nobody true
+# make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
+RUN set -eux; \
+   if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
+   # if this file exists, we're likely in "debian:xxx-slim", and locales are thus being excluded so we need to remove that exclusion (since we need locales)
+   grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+   sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/docker; \
+   ! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+   fi; \
+   apt-get update; apt-get install -y locales; rm -rf /var/lib/apt/lists/*; \
+   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+# install "nss_wrapper" in case we need to fake "/etc/passwd" and "/etc/group" (especially for OpenShift)
+# https://github.com/docker-library/postgres/issues/359
+# https://cwrap.org/nss_wrapper.html
+RUN set -eux; \
+   apt-get update; \
+   apt-get install -y --no-install-recommends libnss-wrapper; \
+   rm -rf /var/lib/apt/lists/*
+COPY  --from=build  /app/pgquarrel2 /app/pgquarrel2
+ENV PATH $PATH:pgquarrel2
+CMD ["/bin/sh"]

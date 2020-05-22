@@ -2,7 +2,7 @@ FROM dalongrong/pgspider:base as build
 WORKDIR /app
 RUN apt-get update && apt-get install -y  automake autoconf libtool pkg-config libssl-dev
 RUN git clone --recursive  https://github.com/pgspider/griddb_fdw.git /app/postgresql-11.6/contrib/griddb_fdw
-RUN wget https://github.com/griddb/c_client/archive/v4.3.1.tar.gz && tar zxvf v4.3.1.tar.gz && mv  c_client-4.3.1  griddb && cp  -rf  griddb /app/postgresql-11.6/contrib/griddb_fdw
+RUN git clone https://github.com/griddb/c_client.git  && cd c_client && git checkout 9aef3b771befbeb7f51309171bf890a3be42d37a && cd ../  && mv  c_client griddb &&  cp -rf griddb /app/postgresql-11.6/contrib/griddb_fdw
 RUN cd /app/postgresql-11.6/contrib/griddb_fdw/griddb/client/c  && ./bootstrap.sh && ./configure &&  make && make install
 RUN cd /app/postgresql-11.6/contrib/griddb_fdw && make && make install
 FROM debian:stretch-slim
