@@ -1,5 +1,5 @@
 FROM debian:stretch-slim
-RUN apt-get update && apt-get install -y build-essential git  wget libreadline-dev  zlib1g-dev
+RUN apt-get update && apt-get install -y build-essential git libossp-uuid-dev wget libreadline-dev  zlib1g-dev
 WORKDIR /app
 RUN set -eux; \
    if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
@@ -21,7 +21,7 @@ RUN wget https://raw.githubusercontent.com/pgspider/pgspider/master/pgspider.pat
 RUN tar xvf postgresql-11.6.tar.gz
 RUN patch -p1 -d postgresql-11.6 < /app/pgspider.patch
 RUN cd postgresql-11.6 \
-   && ./configure \
+   && ./configure --with-uuid=ossp \
    && make && make install \
    && cd /app/postgresql-11.6/contrib/pgspider_core_fdw \
    && make && make install \
